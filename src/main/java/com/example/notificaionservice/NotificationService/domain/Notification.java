@@ -37,4 +37,17 @@ public class Notification {
 
     public Notification() {
     }
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", link='" + link + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", notificationType=" + notificationType +
+                '}';
+    }
 }

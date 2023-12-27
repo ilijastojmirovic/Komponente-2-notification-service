@@ -23,13 +23,5 @@ public class NotificationController {
     }
 
 
-    @Operation(summary = "Notification")
-    @PostMapping("/activation")
-    public ResponseEntity<Void> notification(@RequestBody NotificationCreateDto notificationCreateDto) {
-        notificationService.add(notificationCreateDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-
 
 }

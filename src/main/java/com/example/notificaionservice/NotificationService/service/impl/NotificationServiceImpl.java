@@ -30,7 +30,10 @@ public class NotificationServiceImpl implements NotificationService {
     public void add(NotificationCreateDto notificationCreateDto) {
         NotificationType notificationType1 = new NotificationType("Activation");
         notificationTypeRepository.save(notificationType1);
+        System.out.println(notificationCreateDto);
         Notification notificaton = new Notification(notificationCreateDto.getFirstName(), notificationCreateDto.getLastName(), "", notificationType1, notificationCreateDto.getUsername(), notificationCreateDto.getEmail());
+        System.out.println(notificaton);
+
         String email = "Pozdrav " + notificationCreateDto.getFirstName() + " " + notificationCreateDto.getLastName() + ",\n\n" +
                 "Dobrodošli na našu aplikaciju. Molimo Vas da aktivirate Vaš nalog klikom na link ispod.\n\n" +
                 notificaton.getLink() + "\n\n" +
@@ -40,7 +43,6 @@ public class NotificationServiceImpl implements NotificationService {
         sendEmail(notificationCreateDto.getEmail(), "Aktivacija naloga", email);
         notificationRepository.save(notificaton);
     }
-
     private void sendEmail(String to, String subject, String content) {
         final String username = "ilija.ika.stojmirovic@gmail.com"; // vaš email
         final String password = "gbbp ohsi zfur tiqu"; // vaša lozinka

@@ -17,4 +17,14 @@ public class NotificationCreateDto {
         this.email = email;
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "NotificationCreateDto{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }
