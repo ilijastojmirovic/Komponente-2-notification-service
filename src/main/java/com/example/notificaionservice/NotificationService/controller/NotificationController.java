@@ -1,6 +1,7 @@
 package com.example.notificaionservice.NotificationService.controller;
 
 import com.example.notificaionservice.NotificationService.domain.Notification;
+import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class NotificationController {
 
     @Operation(summary = "Notification")
     @PostMapping("/activation")
-    public ResponseEntity<Void> notification(@RequestBody Notification notification) {
-        notificationService.add(notification);
+    public ResponseEntity<Void> notification(@RequestBody NotificationCreateDto notificationCreateDto) {
+        notificationService.add(notificationCreateDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
