@@ -24,16 +24,16 @@ public class TestDataRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        NotificationType notificationType2 = new NotificationType("Changed password");
-        NotificationType notificationType3 = new NotificationType("Successfully scheduled training");
+//        NotificationType notificationType2 = new NotificationType("Changed password");
+//        NotificationType notificationType3 = new NotificationType("Successfully scheduled training");
         NotificationType notificationType4 = new NotificationType("Training canceled");
-        NotificationType notificationType5 = new NotificationType("Remainder");
+//        NotificationType notificationType5 = new NotificationType("Remainder");
 
        // notificationTypeRepository.save(notificationType1);
-        notificationTypeRepository.save(notificationType2);
-        notificationTypeRepository.save(notificationType3);
+//        notificationTypeRepository.save(notificationType2);
+//        notificationTypeRepository.save(notificationType3);
         notificationTypeRepository.save(notificationType4);
-        notificationTypeRepository.save(notificationType5);
+//        notificationTypeRepository.save(notificationType5);
 
         //String firstName, String lastName, String link, NotificationType notificationType, String username, String email
         Notification notification1 = new Notification("Pera", "Peric", "", notificationType4, "pera", "");

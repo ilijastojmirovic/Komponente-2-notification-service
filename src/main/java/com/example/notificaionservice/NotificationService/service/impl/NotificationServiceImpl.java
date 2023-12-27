@@ -6,12 +6,11 @@ import com.example.notificaionservice.NotificationService.dto.NotificationCreate
 import com.example.notificaionservice.NotificationService.repository.NotificationRepository;
 import com.example.notificaionservice.NotificationService.repository.NotificationTypeRepository;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Service
@@ -20,6 +19,10 @@ public class NotificationServiceImpl implements NotificationService {
     NotificationRepository notificationRepository;
     NotificationTypeRepository notificationTypeRepository;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
+
     public NotificationServiceImpl(NotificationRepository notificationRepository, NotificationTypeRepository notificationTypeRepository) {
         this.notificationRepository = notificationRepository;
         this.notificationTypeRepository = notificationTypeRepository;
@@ -27,54 +30,47 @@ public class NotificationServiceImpl implements NotificationService {
 
 
     @Override
-    public void add(NotificationCreateDto notificationCreateDto) {
-        NotificationType notificationType1 = new NotificationType("Activation");
-        notificationTypeRepository.save(notificationType1);
-        System.out.println(notificationCreateDto);
-        Notification notificaton = new Notification(notificationCreateDto.getFirstName(), notificationCreateDto.getLastName(), "", notificationType1, notificationCreateDto.getUsername(), notificationCreateDto.getEmail());
-        System.out.println(notificaton);
+    public void registration(NotificationCreateDto notificationCreateDto) {
+        NotificationType notificationType = new NotificationType("Activation");
+        notificationTypeRepository.save(notificationType);
+        Notification notificaton = new Notification(notificationCreateDto.getFirstName(), notificationCreateDto.getLastName()
+                , "", notificationType, notificationCreateDto.getUsername(), notificationCreateDto.getEmail());
 
-        String email = "Pozdrav " + notificationCreateDto.getFirstName() + " " + notificationCreateDto.getLastName() + ",\n\n" +
-                "Dobrodošli na našu aplikaciju. Molimo Vas da aktivirate Vaš nalog klikom na link ispod.\n\n" +
-                notificaton.getLink() + "\n\n" +
-                "Srdačan pozdrav,\n" +
-                "Tim za podršku\n" +
-                "Fitnes Centar";
-        sendEmail(notificationCreateDto.getEmail(), "Aktivacija naloga", email);
+        String email = "Hello " + notificationCreateDto.getFirstName() + " " + notificationCreateDto.getLastName() + ",\n\n" +
+                "Welcome to our application. Please activate your account by clicking on the link below.\n\n" +
+                notificaton.getLink() + ",\n\n" +
+                "Best Regards,\n" +
+                "Support team\n" +
+                "Fitness Center";
+        sendEmail(notificationCreateDto.getEmail(), "Account activation", email);
         notificationRepository.save(notificaton);
     }
-    private void sendEmail(String to, String subject, String content) {
-        final String username = "ilija.ika.stojmirovic@gmail.com"; // vaš email
-        final String password = "gbbp ohsi zfur tiqu"; // vaša lozinka
 
-        Properties prop = new Properties();
-        prop.put("mail.smtp.host", "smtp.gmail.com"); // navedite SMTP server
-        prop.put("mail.smtp.port", "587");
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true"); // TLS
+    @Override
+    public void changePassword(NotificationCreateDto notificationCreateDto) {
+        NotificationType notificationType = new NotificationType("Changed password");
+        notificationTypeRepository.save(notificationType);
+        Notification notificaton = new Notification(notificationCreateDto.getFirstName(), notificationCreateDto.getLastName()
+                ,"http://localhost:4200/client-home-page", notificationType, notificationCreateDto.getUsername(), notificationCreateDto.getEmail());
 
-        Session session = Session.getInstance(prop, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        String email = "Hello " + notificationCreateDto.getFirstName() + " " + notificationCreateDto.getLastName() + ",\n\n" +
+                "Your password has been successfully changed.\n\n" +
+                "you can return to the site" + notificaton.getLink() + "\n\n" +
+                "Best Regards,\n" +
+                "Support team\n" +
+                "Fitness Center";
+        sendEmail(notificationCreateDto.getEmail(), "Changed password", email);
+        notificationRepository.save(notificaton);
+    }
 
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("ilija.ika.stojmirovic@gmail.com"));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(to)
-            );
-            message.setSubject(subject);
-            message.setText(content);
+    public void sendEmail(String toEmail, String subject, String body){
+        SimpleMailMessage message = new SimpleMailMessage();
+        //message.setFrom("arjungautam8877@gmail.com");
+        message.setTo(toEmail);
+        message.setText(body);
+        message.setSubject(subject);
 
-            Transport.send(message);
-
-            System.out.println("Email uspešno poslat");
-
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+        mailSender.send(message);
+        System.out.println("RADIII Jupi");
     }
 }

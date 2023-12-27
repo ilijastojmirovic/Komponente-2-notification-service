@@ -16,15 +16,17 @@ public class RegistrationListener {
     public RegistrationListener(MessageHelper messageHelper, NotificationService notificationService) {
         this.messageHelper = messageHelper;
         this.notificationService = notificationService;
-        System.out.println("dsadasdasdsa");
     }
 
     @JmsListener(destination = "${destination.registrationMessage}", concurrency = "5-10")
     public void registrationMessage(Message message) throws JMSException {
-        System.out.println("message321321321312321");
-        System.out.println(message);
         NotificationCreateDto notificationCreateDto = messageHelper.getMessage(message, NotificationCreateDto.class);
-        System.out.println(notificationCreateDto);
-        notificationService.add(notificationCreateDto);
+        notificationService.registration(notificationCreateDto);
+    }
+
+    @JmsListener(destination = "${destination.changedPasswordMessage}", concurrency = "5-10")
+    public void changedPasswordMessage(Message message) throws JMSException {
+        NotificationCreateDto notificationCreateDto = messageHelper.getMessage(message, NotificationCreateDto.class);
+        notificationService.changePassword(notificationCreateDto);
     }
 }
