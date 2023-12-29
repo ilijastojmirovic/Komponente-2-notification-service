@@ -3,31 +3,40 @@ package com.example.notificaionservice.NotificationService.service.impl;
 import com.example.notificaionservice.NotificationService.domain.Notification;
 import com.example.notificaionservice.NotificationService.domain.NotificationType;
 import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
+import com.example.notificaionservice.NotificationService.dto.NotificationDto;
+import com.example.notificaionservice.NotificationService.mapper.NotificationsMapper;
 import com.example.notificaionservice.NotificationService.repository.NotificationRepository;
 import com.example.notificaionservice.NotificationService.repository.NotificationTypeRepository;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
+import io.jsonwebtoken.Claims;
+import org.springframework.data.domain.Page;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-    NotificationRepository notificationRepository;
-    NotificationTypeRepository notificationTypeRepository;
-
+    private NotificationRepository notificationRepository;
+    private NotificationTypeRepository notificationTypeRepository;
+    private NotificationsMapper notificationsMapper;
     @Autowired
     private JavaMailSender mailSender;
 
 
-    public NotificationServiceImpl(NotificationRepository notificationRepository, NotificationTypeRepository notificationTypeRepository) {
+    public NotificationServiceImpl(NotificationRepository notificationRepository, NotificationTypeRepository notificationTypeRepository, NotificationsMapper notificationsMapper) {
         this.notificationRepository = notificationRepository;
         this.notificationTypeRepository = notificationTypeRepository;
+        this.notificationsMapper = notificationsMapper;
     }
-
 
     @Override
     public void registration(NotificationCreateDto notificationCreateDto) {
@@ -63,6 +72,28 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notificaton);
     }
 
+//    @Override
+//    public List<NotificationDto> listNotifications(String username) {
+//        System.out.println(username);
+//        List<Notification> notification = notificationRepository.findAllByUsername(username);
+//        System.out.println(notification);
+//        List<NotificationDto> notificationDtos = notification.stream().map(notificationsMapper::notificationToNotificationDto).collect(Collectors.toList());
+//        System.out.println(notificationDtos);
+//        return notificationDtos;
+//    }
+    @Override
+    public List<NotificationDto> listNotifications(String username) {
+        Optional<List<Notification>> notifications = notificationRepository.findAllByUsername(username);
+        System.out.println(notifications);
+        if (notifications.isPresent()) {
+            List<NotificationDto> nd = notifications.get().stream().map(notificationsMapper::notificationToNotificationDto).collect(Collectors.toList());
+            System.out.println(nd);
+            return nd;
+        } else {
+            throw new NoSuchElementException("No notifications for user " + username);
+        }
+    }
+
     public void sendEmail(String toEmail, String subject, String body){
         SimpleMailMessage message = new SimpleMailMessage();
         //message.setFrom("arjungautam8877@gmail.com");
@@ -73,4 +104,6 @@ public class NotificationServiceImpl implements NotificationService {
         mailSender.send(message);
         System.out.println("RADIII Jupi");
     }
+
+
 }

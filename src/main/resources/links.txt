@@ -1,0 +1,12 @@
+Servis 1
+localhost:8080/api/h2-console
+localhost:8080/api/swagger-ui/index.html
+
+
+Servis 3
+localhost:8081/api/h2-console
+localhost:8081/api/swagger-ui/index.html
+
+
+Overall
+http://localhost:4200/
