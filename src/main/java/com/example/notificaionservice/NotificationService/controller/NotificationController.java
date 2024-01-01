@@ -39,7 +39,7 @@ public class NotificationController {
     @Operation(summary = "Get notifications by username")
     @GetMapping("/allNotifications")
     public ResponseEntity<Page<NotificationDto>> allNotifications(Pageable pageable) {
-        System.out.println(pageable);
+        System.out.println(pageable); //
         return  new ResponseEntity<>(notificationService.allNotifications(pageable), HttpStatus.OK);
     }
 }
