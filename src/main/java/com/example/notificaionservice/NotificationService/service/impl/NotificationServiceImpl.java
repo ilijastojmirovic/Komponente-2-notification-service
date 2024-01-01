@@ -9,8 +9,9 @@ import com.example.notificaionservice.NotificationService.mapper.NotificationsMa
 import com.example.notificaionservice.NotificationService.repository.NotificationRepository;
 import com.example.notificaionservice.NotificationService.repository.NotificationTypeRepository;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
-import io.jsonwebtoken.Claims;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
@@ -88,16 +89,6 @@ public class NotificationServiceImpl implements NotificationService {
         sendEmail(notificationScheduleMessageDto.getEmail(), "Scheduling appointment", email);
         notificationRepository.save(notificaton);
     }
-
-    //    @Override
-//    public List<NotificationDto> listNotifications(String username) {
-//        System.out.println(username);
-//        List<Notification> notification = notificationRepository.findAllByUsername(username);
-//        System.out.println(notification);
-//        List<NotificationDto> notificationDtos = notification.stream().map(notificationsMapper::notificationToNotificationDto).collect(Collectors.toList());
-//        System.out.println(notificationDtos);
-//        return notificationDtos;
-//    }
     @Override
     public List<NotificationDto> listNotifications(String username) {
         Optional<List<Notification>> notifications = notificationRepository.findAllByUsername(username);
@@ -109,6 +100,12 @@ public class NotificationServiceImpl implements NotificationService {
         } else {
             throw new NoSuchElementException("No notifications for user " + username);
         }
+    }
+
+    @Override
+    public Page<NotificationDto> allNotifications(Pageable pageable) {
+        return notificationRepository.findAll(pageable)
+                .map(notificationsMapper::notificationToNotificationDto);
     }
 
     public void sendEmail(String toEmail, String subject, String body){
