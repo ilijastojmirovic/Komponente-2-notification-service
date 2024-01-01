@@ -4,6 +4,7 @@ import com.example.notificaionservice.NotificationService.domain.Notification;
 import com.example.notificaionservice.NotificationService.domain.NotificationType;
 import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
 import com.example.notificaionservice.NotificationService.dto.NotificationDto;
+import com.example.notificaionservice.NotificationService.dto.NotificationScheduleMessageDto;
 import com.example.notificaionservice.NotificationService.mapper.NotificationsMapper;
 import com.example.notificaionservice.NotificationService.repository.NotificationRepository;
 import com.example.notificaionservice.NotificationService.repository.NotificationTypeRepository;
@@ -72,7 +73,23 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.save(notificaton);
     }
 
-//    @Override
+    @Override
+    public void scheduleMessage(NotificationScheduleMessageDto notificationScheduleMessageDto) {
+        NotificationType notificationType = new NotificationType("Schedule message");
+        notificationTypeRepository.save(notificationType);
+        Notification notificaton = new Notification(notificationScheduleMessageDto.getFirstName(), notificationScheduleMessageDto.getLastName()
+                , "", notificationType, notificationScheduleMessageDto.getUsername(), notificationScheduleMessageDto.getEmail());
+
+       String email = "Hello " + notificationScheduleMessageDto.getFirstName() + " " + notificationScheduleMessageDto.getLastName() + ",\n\n" +
+                "You have made an appointment on " + notificationScheduleMessageDto.getDay() + " at " + notificationScheduleMessageDto.getTime() + " in " + notificationScheduleMessageDto.getHallName() + ".\n\n" +
+                "Best Regards,\n" +
+                "Support team\n" +
+                "Fitness Center";
+        sendEmail(notificationScheduleMessageDto.getEmail(), "Scheduling appointment", email);
+        notificationRepository.save(notificaton);
+    }
+
+    //    @Override
 //    public List<NotificationDto> listNotifications(String username) {
 //        System.out.println(username);
 //        List<Notification> notification = notificationRepository.findAllByUsername(username);

@@ -1,6 +1,7 @@
 package com.example.notificaionservice.NotificationService.listener;
 
 import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
+import com.example.notificaionservice.NotificationService.dto.NotificationScheduleMessageDto;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -28,5 +29,11 @@ public class RegistrationListener {
     public void changedPasswordMessage(Message message) throws JMSException {
         NotificationCreateDto notificationCreateDto = messageHelper.getMessage(message, NotificationCreateDto.class);
         notificationService.changePassword(notificationCreateDto);
+    }
+
+    @JmsListener(destination = "scheduling_message", concurrency = "5-10")
+    public void schedulingMessage(Message message) throws JMSException {
+        NotificationScheduleMessageDto notificationScheduleMessageDto = messageHelper.getMessage(message, NotificationScheduleMessageDto.class);
+        notificationService.scheduleMessage(notificationScheduleMessageDto);
     }
 }
