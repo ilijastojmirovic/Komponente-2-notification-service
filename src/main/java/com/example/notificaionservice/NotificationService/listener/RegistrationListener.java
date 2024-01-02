@@ -36,4 +36,10 @@ public class RegistrationListener {
         NotificationScheduleMessageDto notificationScheduleMessageDto = messageHelper.getMessage(message, NotificationScheduleMessageDto.class);
         notificationService.scheduleMessage(notificationScheduleMessageDto);
     }
+    @JmsListener(destination = "cancel_scheduling_message", concurrency = "5-10")
+    public void cancelSchedulingMessage(Message message) throws JMSException {
+        NotificationScheduleMessageDto notificationScheduleMessageDto = messageHelper.getMessage(message, NotificationScheduleMessageDto.class);
+        notificationService.cancelSchedulingMessage(notificationScheduleMessageDto);
+    }
+
 }

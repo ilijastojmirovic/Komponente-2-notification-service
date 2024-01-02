@@ -12,8 +12,8 @@ import java.util.List;
 public interface NotificationService {
     void registration(NotificationCreateDto notificationCreateDto);
     void changePassword(NotificationCreateDto notificationCreateDto);
-
     void scheduleMessage(NotificationScheduleMessageDto notificationScheduleMessageDto);
+    void cancelSchedulingMessage(NotificationScheduleMessageDto notificationScheduleMessageDto);
     List<NotificationDto> listNotifications(String username);
 
     Page<NotificationDto> allNotifications(Pageable pageable);

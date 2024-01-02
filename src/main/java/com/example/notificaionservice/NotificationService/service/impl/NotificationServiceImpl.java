@@ -89,6 +89,23 @@ public class NotificationServiceImpl implements NotificationService {
         sendEmail(notificationScheduleMessageDto.getEmail(), "Scheduling appointment", email);
         notificationRepository.save(notificaton);
     }
+
+    @Override
+    public void cancelSchedulingMessage(NotificationScheduleMessageDto notificationScheduleMessageDto) {
+        NotificationType notificationType = new NotificationType("Schedule canceled message");
+        notificationTypeRepository.save(notificationType);
+        Notification notificaton = new Notification(notificationScheduleMessageDto.getFirstName(), notificationScheduleMessageDto.getLastName()
+                , "", notificationType, notificationScheduleMessageDto.getUsername(), notificationScheduleMessageDto.getEmail());
+
+        String email = "Hello " + notificationScheduleMessageDto.getFirstName() + " " + notificationScheduleMessageDto.getLastName() + ",\n\n" +
+                "Your appointment is canceled on " + notificationScheduleMessageDto.getDay() + " at " + notificationScheduleMessageDto.getTime() + " in " + notificationScheduleMessageDto.getHallName() + ".\n\n" +
+                "Best Regards,\n" +
+                "Support team\n" +
+                "Fitness Center";
+        sendEmail(notificationScheduleMessageDto.getEmail(), "Canceled appointment", email);
+        notificationRepository.save(notificaton);
+    }
+
     @Override
     public List<NotificationDto> listNotifications(String username) {
         Optional<List<Notification>> notifications = notificationRepository.findAllByUsername(username);

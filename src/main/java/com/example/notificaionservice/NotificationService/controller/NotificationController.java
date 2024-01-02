@@ -35,6 +35,7 @@ public class NotificationController {
     public void showNotifications() {
         System.out.println("test");
     }
+
     @Operation(summary = "Get notifications by username")
     @GetMapping("/{username}")
     public ResponseEntity<List<NotificationDto>> showNotifications(@PathVariable String username) {
