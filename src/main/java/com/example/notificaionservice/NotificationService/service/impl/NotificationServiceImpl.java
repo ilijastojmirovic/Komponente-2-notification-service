@@ -1,9 +1,11 @@
 package com.example.notificaionservice.NotificationService.service.impl;
 
+import com.example.notificaionservice.NotificationService.client.ClientDto;
 import com.example.notificaionservice.NotificationService.domain.Notification;
 import com.example.notificaionservice.NotificationService.domain.NotificationType;
 import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
 import com.example.notificaionservice.NotificationService.dto.NotificationDto;
+import com.example.notificaionservice.NotificationService.dto.NotificationFromManagerDto;
 import com.example.notificaionservice.NotificationService.dto.NotificationScheduleMessageDto;
 import com.example.notificaionservice.NotificationService.mapper.NotificationsMapper;
 import com.example.notificaionservice.NotificationService.repository.NotificationRepository;
@@ -12,11 +14,15 @@ import com.example.notificaionservice.NotificationService.service.NotificationSe
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,10 +40,15 @@ public class NotificationServiceImpl implements NotificationService {
     private JavaMailSender mailSender;
 
 
-    public NotificationServiceImpl(NotificationRepository notificationRepository, NotificationTypeRepository notificationTypeRepository, NotificationsMapper notificationsMapper) {
+    private RestTemplate clientServiceRestTemplate;
+
+
+    public NotificationServiceImpl(NotificationRepository notificationRepository, NotificationTypeRepository notificationTypeRepository,
+                                   NotificationsMapper notificationsMapper, RestTemplate clientServiceRestTemplate) {
         this.notificationRepository = notificationRepository;
         this.notificationTypeRepository = notificationTypeRepository;
         this.notificationsMapper = notificationsMapper;
+        this.clientServiceRestTemplate = clientServiceRestTemplate;
     }
 
     @Override
@@ -103,6 +114,28 @@ public class NotificationServiceImpl implements NotificationService {
                 "Support team\n" +
                 "Fitness Center";
         sendEmail(notificationScheduleMessageDto.getEmail(), "Canceled appointment", email);
+        notificationRepository.save(notificaton);
+    }
+
+    @Override
+    public void managerCancelSchedulingMessage(NotificationFromManagerDto notificationFromManagerDto) {
+        System.out.println(notificationFromManagerDto);
+        ResponseEntity<ClientDto> client = clientServiceRestTemplate.exchange("/client/clientForNotification/" + notificationFromManagerDto.getClientId(),
+                HttpMethod.GET, new HttpEntity<>(notificationFromManagerDto.getClientId()), ClientDto.class);
+        System.out.println(client);
+        NotificationType notificationType = new NotificationType("Manager canceled message");
+        notificationTypeRepository.save(notificationType);
+
+        Notification notificaton = new Notification(client.getBody().getFirstName(), client.getBody().getLastName()
+                , "", notificationType, client.getBody().getUsername(), client.getBody().getEmail());
+
+        String email = "Hello " + client.getBody().getFirstName() + " " + client.getBody().getLastName() + ",\n\n" +
+                "Your appointment is canceled on " + notificationFromManagerDto.getDay() + " at " + notificationFromManagerDto.getStartTime() + " in " + notificationFromManagerDto.getHallName() + ".\n\n" +
+                "Best Regards,\n" +
+                "Manager " + notificationFromManagerDto.getManagerFirstName() + " " + notificationFromManagerDto.getManagerLastName() + "\n" +
+                "Fitness Center";
+
+        sendEmail(client.getBody().getEmail(), "Manager canceled appointment", email);
         notificationRepository.save(notificaton);
     }
 

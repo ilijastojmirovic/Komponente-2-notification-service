@@ -1,6 +1,7 @@
 package com.example.notificaionservice.NotificationService.listener;
 
 import com.example.notificaionservice.NotificationService.dto.NotificationCreateDto;
+import com.example.notificaionservice.NotificationService.dto.NotificationFromManagerDto;
 import com.example.notificaionservice.NotificationService.dto.NotificationScheduleMessageDto;
 import com.example.notificaionservice.NotificationService.service.NotificationService;
 import jakarta.jms.JMSException;
@@ -40,6 +41,12 @@ public class RegistrationListener {
     public void cancelSchedulingMessage(Message message) throws JMSException {
         NotificationScheduleMessageDto notificationScheduleMessageDto = messageHelper.getMessage(message, NotificationScheduleMessageDto.class);
         notificationService.cancelSchedulingMessage(notificationScheduleMessageDto);
+    }
+
+    @JmsListener(destination = "manager_cancel_scheduling_message", concurrency = "5-12")
+    public void managerCancelSchedulingMessage(Message message) throws JMSException {
+        NotificationFromManagerDto notificationFromManagerDto = messageHelper.getMessage(message, NotificationFromManagerDto.class);
+        notificationService.managerCancelSchedulingMessage(notificationFromManagerDto);
     }
 
 }
