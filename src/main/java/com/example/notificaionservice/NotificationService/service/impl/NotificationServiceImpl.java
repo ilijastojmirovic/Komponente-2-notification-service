@@ -109,10 +109,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationDto> listNotifications(String username) {
         Optional<List<Notification>> notifications = notificationRepository.findAllByUsername(username);
-        System.out.println(notifications);
         if (notifications.isPresent()) {
             List<NotificationDto> nd = notifications.get().stream().map(notificationsMapper::notificationToNotificationDto).collect(Collectors.toList());
-            System.out.println(nd);
             return nd;
         } else {
             throw new NoSuchElementException("No notifications for user " + username);
