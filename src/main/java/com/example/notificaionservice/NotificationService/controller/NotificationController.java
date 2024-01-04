@@ -22,14 +22,6 @@ public class NotificationController {
     public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
-//
-//    @Operation(summary = "Get notifications by username")
-//    @GetMapping("/{username}")
-//    public List<NotificationDto> showNotifications(@PathVariable String username) {
-//        List<NotificationDto> notificationDtos = notificationService.listNotifications(username);
-//        System.out.println(notificationDtos);
-//        return notificationDtos;
-//    }
     @Operation(summary = "Get notifications by username")
     @GetMapping("/test")
     public void showNotifications() {
