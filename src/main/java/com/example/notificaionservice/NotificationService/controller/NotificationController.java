@@ -39,16 +39,13 @@ public class NotificationController {
     @Operation(summary = "Get notifications by username")
     @GetMapping("/{username}")
     public ResponseEntity<List<NotificationDto>> showNotifications(@PathVariable String username) {
-        System.out.println("usao u notif controller");
         List<NotificationDto> notificationDtos = notificationService.listNotifications(username);
-        System.out.println(notificationDtos);
         return  new ResponseEntity<>(notificationDtos, HttpStatus.OK);
     }
 
     @Operation(summary = "Get notifications by username")
     @GetMapping("/allNotifications")
     public ResponseEntity<Page<NotificationDto>> allNotifications(Pageable pageable) {
-        System.out.println(pageable);
         return  new ResponseEntity<>(notificationService.allNotifications(pageable), HttpStatus.OK);
     }
 }
